@@ -3,6 +3,9 @@
   max-width: 880px;
   padding: 0 0 40px;
   border-bottom: 1px solid #545454;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 @media screen and (max-width: 880px) {
