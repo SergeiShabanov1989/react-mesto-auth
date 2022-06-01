@@ -35,7 +35,7 @@ const Login = () => {
           src={logo}
           alt="логотип сайта"
           className="header__logo"/>
-        <Link to="/register" className="login__signup">Регистрация</Link>
+        <Link to="/signup" className="login__signup">Регистрация</Link>
       </header>
       <div className="login">
         <h2 className="login__title">

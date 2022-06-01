@@ -11,6 +11,7 @@ import AddPlacePopup from "./AddPlacePopup";
 import {api} from "../utils/api";
 import {CurrentUserContext} from "../contexts/CurrentUserContext"
 import Login from "./Login";
+import Register from "./Register";
 
 function App() {
   const [cards, setCards] = React.useState([]);
@@ -146,8 +147,11 @@ function App() {
             onUpdateAvatar={onUpdateAvatar}/>
           <ImagePopup onClose={closeAllPopups} card={selectedCard}/>
         </Route>
-        <Route path="/login">
+        <Route path="/signin">
           <Login ></Login>
+        </Route>
+        <Route path="/signup">
+          <Register ></Register>
         </Route>
       </Switch>
     </CurrentUserContext.Provider>
