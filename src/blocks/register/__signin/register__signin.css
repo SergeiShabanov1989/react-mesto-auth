@@ -1,9 +1,9 @@
-.register__signin {
-  text-decoration: none;
-  color: white;
-  transition: opacity .3s;
-}
+ .register__signin {
+   text-decoration: none;
+   color: white;
+   transition: opacity .3s;
+ }
 
-.register__signin:hover {
-  opacity: .5;
-}
+ .register__signin:hover {
+   opacity: .5;
+ }

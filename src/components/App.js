@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Switch } from 'react-router-dom';
+import {Redirect, Route, Switch, useHistory} from 'react-router-dom';
 import Header from '../components/Header';
 import Main from '../components/Main';
 import Footer from '../components/Footer';
@@ -12,6 +12,8 @@ import {api} from "../utils/api";
 import {CurrentUserContext} from "../contexts/CurrentUserContext"
 import Login from "./Login";
 import Register from "./Register";
+import ProtectedRoute from "./ProtectedRoute";
+import * as auth from '../auth.js';
 
 function App() {
   const [cards, setCards] = React.useState([]);
@@ -24,6 +26,9 @@ function App() {
     isOpen: false
   });
   const [currentUser, setCurrentUser] = React.useState({});
+  const [loggedIn, setLoggedIn] = React.useState(false);
+  const [userData, setUserData] = React.useState();
+  const history = useHistory();
 
   function handleCardLike(likes, id) {
     const isLiked = likes.some(i => i._id === currentUser._id);
@@ -115,11 +120,67 @@ function App() {
       .catch(console.log)
   }
 
+  const handleLogin = ({ email, password }) => {
+    return auth.authorize(email, password)
+      .then((data) => {
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+
+          tokenCheck();
+        }
+      })
+  }
+
+  const handleRegister = ({ password, email }) => {
+    return auth.register(password, email).then((res) => {
+      history.push('/signin');
+    });
+  }
+
+  const tokenCheck = () => {
+    if (localStorage.getItem('token')){
+      let jwt = localStorage.getItem('token');
+      auth.getContent(jwt).then((res) => {
+        if (res){
+          let userData = {
+            email: res.email
+          }
+
+          setLoggedIn(true);
+          setUserData(userData);
+        }
+      });
+    }
+  }
+
+  const signOut = () => {
+    localStorage.removeItem('token');
+    setLoggedIn(false);
+    setUserData(null);
+    history.push('/signin');
+  }
+
+  React.useEffect(() => {
+    tokenCheck();
+  }, []);
+
+  React.useEffect(() => {
+    if (loggedIn) {
+      history.push("/");
+    }
+  }, [loggedIn]);
+
   return (
     <CurrentUserContext.Provider value={{ currentUser }}>
+      <Header userData={userData} handleSignOut={signOut} />
       <Switch>
-        <Route path="/main">
-          <Header />
+        <Route path="/signin">
+          <Login handleLogin={handleLogin}></Login>
+        </Route>
+        <Route path="/signup">
+          <Register handleRegister={handleRegister}></Register>
+        </Route>
+        <ProtectedRoute path="/" loggedIn={loggedIn}>
           <Main
             cards={cards}
             onCardLike={handleCardLike}
@@ -127,31 +188,33 @@ function App() {
             onCardClick={handleCardClick}
             onEditProfile={handleEditProfileClick}
             onAddPlace={handleAddPlacePopupOpen}
-            onEditAvatar={handleEditAvatarPopupOpen}/>
+            onEditAvatar={handleEditAvatarPopupOpen}
+          />
           <Footer />
           <EditProfilePopup
             isOpen={isEditProfilePopupOpen}
             onClose={closeAllPopups}
-            onUpdateUser={onUpdateUser}/>
+            onUpdateUser={onUpdateUser}
+          />
           <AddPlacePopup
             onClose={closeAllPopups}
             isOpen={isAddPlacePopupOpen}
-            onAddPlace={handleAddPlaceSubmit}/>
+            onAddPlace={handleAddPlaceSubmit}
+          />
           <PopupWithForm
             button="Да"
             name="delete"
-            title="Вы уверены?"/>
+            title="Вы уверены?"
+          />
           <EditAvatarPopup
             isOpen={isEditAvatarPopupOpen}
             onClose={closeAllPopups}
-            onUpdateAvatar={onUpdateAvatar}/>
-          <ImagePopup onClose={closeAllPopups} card={selectedCard}/>
-        </Route>
-        <Route path="/signin">
-          <Login ></Login>
-        </Route>
-        <Route path="/signup">
-          <Register ></Register>
+            onUpdateAvatar={onUpdateAvatar}
+          />
+          <ImagePopup onClose={closeAllPopups} card={selectedCard} />
+        </ProtectedRoute>
+        <Route>
+          {loggedIn ? <Redirect to="/" /> : <Redirect to="/signin" />}
         </Route>
       </Switch>
     </CurrentUserContext.Provider>

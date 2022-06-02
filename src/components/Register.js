@@ -1,53 +1,43 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import logo from "../images/logo.svg";
 
-const Register = () => {
-  // const [formParams, setFormParams] = useState({
-  //   username: '',
-  //   password: '',
-  // });
-  // const [message, setMessage] = useState('');
+const Register = (props) => {
+  const [formParams, setFormParams] = useState({
+    email: '',
+    password: ''
+  });
+  //const [message, setMessage] = useState('');
 
-  // const handleChange = (e) => {
-  //   const {name, value} = e.target;
-  //   setFormParams((prev) => ({
-  //     ...prev,
-  //     [name]: value
-  //   }));
-  // }
+  const handleChange = (e) => {
+    const {name, value} = e.target;
+    setFormParams((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  }
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   if (!formParams.username || !formParams.password){
-  //     return;
-  //   }
-  //   props.handleLogin({ username: formParams.username, password: formParams.password })
-  //     .catch(err => {
-  //       setMessage(err.message);
-  //     });
-  // }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    let { password, email } = formParams;
+    props.handleRegister({ password, email }).catch(err => {
+      console.log(err.message);
+    });
+  }
 
   return(
     <>
-      <header className="header">
-        <img
-          src={logo}
-          alt="логотип сайта"
-          className="header__logo"/>
-        <Link to="/signin" className="register__signin">Войти</Link>
-      </header>
       <div className="register">
         <h2 className="register__title">
           Регистрация
         </h2>
-        <form className="register__form">
+        <form className="register__form" onSubmit={handleSubmit}>
           <input
             className="register__text"
             required
-            name="username"
-            type="text"
+            name="email"
+            type="email"
             placeholder="Email"
+            onChange={handleChange}
           />
           <input
             className="register__text"
@@ -55,6 +45,7 @@ const Register = () => {
             name="password"
             type="password"
             placeholder="Пароль"
+            onChange={handleChange}
           />
           <div className="register__button-container">
             <button type="submit" className="register__link">Зарегистрироваться</button>
