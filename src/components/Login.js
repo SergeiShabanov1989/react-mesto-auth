@@ -5,7 +5,6 @@ const Login = (props) => {
     email: '',
     password: ''
   });
-  //const [message, setMessage] = useState('');
 
   const handleChange = (e) => {
     const {name, value} = e.target;

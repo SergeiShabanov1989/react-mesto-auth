@@ -14,6 +14,9 @@ import Login from "./Login";
 import Register from "./Register";
 import ProtectedRoute from "./ProtectedRoute";
 import * as auth from '../auth.js';
+import InfoTooltip from "./InfoTooltip";
+import success from "../images/succes.png";
+import unsuccess from "../images/unsuccess.png";
 
 function App() {
   const [cards, setCards] = React.useState([]);
@@ -28,6 +31,8 @@ function App() {
   const [currentUser, setCurrentUser] = React.useState({});
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [userData, setUserData] = React.useState();
+  const [isInfoTooltipSuccessOpen, setInfoTooltipSuccessOpen] = React.useState(false);
+  const [isInfoTooltipUnsuccessOpen, setInfoTooltipUnsuccessOpen] = React.useState(false);
   const history = useHistory();
 
   function handleCardLike(likes, id) {
@@ -91,6 +96,8 @@ function App() {
       link: '',
       isOpen: false
     })
+    setInfoTooltipSuccessOpen(false)
+    setInfoTooltipUnsuccessOpen(false)
   }
 
   function onUpdateUser(dataProfileFromInput) {
@@ -126,24 +133,32 @@ function App() {
         if (data.token) {
           localStorage.setItem('token', data.token);
 
-          tokenCheck();
+          let userData = {
+            email: email
+          }
+
+          setLoggedIn(true);
+          setUserData(userData);
         }
       })
   }
 
   const handleRegister = ({ password, email }) => {
-    return auth.register(password, email).then((res) => {
+    return auth.register(password, email).then(() => {
       history.push('/signin');
-    });
+      setInfoTooltipSuccessOpen(true)
+    }).catch(() => {
+      setInfoTooltipUnsuccessOpen(true);
+      });
   }
 
   const tokenCheck = () => {
     if (localStorage.getItem('token')){
-      let jwt = localStorage.getItem('token');
-      auth.getContent(jwt).then((res) => {
-        if (res){
+      let token = localStorage.getItem('token');
+      auth.getContent(token).then((res) => {
+        if (res) {
           let userData = {
-            email: res.email
+            email: res.data.email
           }
 
           setLoggedIn(true);
@@ -191,32 +206,44 @@ function App() {
             onEditAvatar={handleEditAvatarPopupOpen}
           />
           <Footer />
-          <EditProfilePopup
-            isOpen={isEditProfilePopupOpen}
-            onClose={closeAllPopups}
-            onUpdateUser={onUpdateUser}
-          />
-          <AddPlacePopup
-            onClose={closeAllPopups}
-            isOpen={isAddPlacePopupOpen}
-            onAddPlace={handleAddPlaceSubmit}
-          />
-          <PopupWithForm
-            button="Да"
-            name="delete"
-            title="Вы уверены?"
-          />
-          <EditAvatarPopup
-            isOpen={isEditAvatarPopupOpen}
-            onClose={closeAllPopups}
-            onUpdateAvatar={onUpdateAvatar}
-          />
-          <ImagePopup onClose={closeAllPopups} card={selectedCard} />
         </ProtectedRoute>
         <Route>
           {loggedIn ? <Redirect to="/" /> : <Redirect to="/signin" />}
         </Route>
       </Switch>
+      <EditProfilePopup
+        isOpen={isEditProfilePopupOpen}
+        onClose={closeAllPopups}
+        onUpdateUser={onUpdateUser}
+      />
+      <AddPlacePopup
+        onClose={closeAllPopups}
+        isOpen={isAddPlacePopupOpen}
+        onAddPlace={handleAddPlaceSubmit}
+      />
+      <PopupWithForm
+        button="Да"
+        name="delete"
+        title="Вы уверены?"
+      />
+      <EditAvatarPopup
+        isOpen={isEditAvatarPopupOpen}
+        onClose={closeAllPopups}
+        onUpdateAvatar={onUpdateAvatar}
+      />
+      <InfoTooltip
+        isOpen={isInfoTooltipSuccessOpen}
+        onClose={closeAllPopups}
+        link={success}
+        text="Вы успешно зарегистрировались!"
+      />
+      <InfoTooltip
+        isOpen={isInfoTooltipUnsuccessOpen}
+        onClose={closeAllPopups}
+        link={unsuccess}
+        text="Что-то пошло не так! Попробуйте ещё раз."
+      />
+      <ImagePopup onClose={closeAllPopups} card={selectedCard} />
     </CurrentUserContext.Provider>
   );
 }
