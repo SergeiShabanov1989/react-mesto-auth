@@ -133,14 +133,16 @@ function App() {
         if (data.token) {
           localStorage.setItem('token', data.token);
 
-          let userData = {
+          const userData = {
             email: email
           }
 
           setLoggedIn(true);
           setUserData(userData);
         }
-      })
+      }).catch(() => {
+        setInfoTooltipUnsuccessOpen(true);
+      });
   }
 
   const handleRegister = ({ password, email }) => {
@@ -157,14 +159,14 @@ function App() {
       let token = localStorage.getItem('token');
       auth.getContent(token).then((res) => {
         if (res) {
-          let userData = {
+          const userData = {
             email: res.data.email
           }
 
           setLoggedIn(true);
           setUserData(userData);
         }
-      });
+      }).catch(console.log)
     }
   }
 

@@ -3,7 +3,7 @@ import { Route, Switch, Link } from 'react-router-dom';
 import React from "react";
 
 function Header(props) {
-  let { email } = props.userData || {};
+  const { email } = props.userData || {};
 
   return (
     <header className="header">
