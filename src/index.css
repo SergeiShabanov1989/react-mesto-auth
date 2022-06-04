@@ -68,6 +68,7 @@
 @import url(./blocks/register/__text/register__text.css);
 @import url(./blocks/register/__button-container/register__button-container.css);
 @import url(./blocks/register/__link/register__link.css);
+@import url(./blocks/register/__signin-text/register__signin-text.css);
 @import url(./blocks/register/__signin/register__signin.css);
 @import url(./blocks/popup-tool/popup-tool.css);
 @import url(./blocks/popup-tool/__container/popup-tool__container.css);

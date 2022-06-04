@@ -46,7 +46,7 @@ const Register = (props) => {
           />
           <div className="register__button-container">
             <button type="submit" className="register__link">Зарегистрироваться</button>
-            <Link to="/signin" className="register__signin">Уже зарегистрированы? Войти</Link>
+            <p className="register__signin-text">Уже зарегистрированы? <Link to="/signin" className="register__signin">Войти</Link></p>
           </div>
         </form>
       </div>
