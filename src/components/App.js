@@ -36,7 +36,7 @@ function App() {
   const history = useHistory();
 
   function handleCardLike(likes, id) {
-    const isLiked = likes.some(i => i._id === currentUser._id);
+    const isLiked = likes.some(i => i === currentUser._id);
 
     api.changeLikeCardStatus(id, !isLiked)
       .then((newCard) => {
@@ -46,7 +46,7 @@ function App() {
   }
 
   function handleCardDelete(owner, id) {
-    const isOwn = owner._id === currentUser._id;
+    const isOwn = owner === currentUser._id;
 
     if (isOwn) {
       api.deleteCard(id)
@@ -136,7 +136,6 @@ function App() {
           const userData = {
             email: email
           }
-
           setLoggedIn(true);
           setUserData(userData);
         }
@@ -145,8 +144,8 @@ function App() {
       });
   }
 
-  const handleRegister = ({ password, email }) => {
-    return auth.register(password, email).then(() => {
+  const handleRegister = ({ email, password }) => {
+    return auth.register(email, password).then(() => {
       history.push('/signin');
       setInfoTooltipSuccessOpen(true)
     }).catch(() => {
@@ -160,7 +159,7 @@ function App() {
       auth.getContent(token).then((res) => {
         if (res) {
           const userData = {
-            email: res.data.email
+            email: res.email
           }
 
           setLoggedIn(true);
